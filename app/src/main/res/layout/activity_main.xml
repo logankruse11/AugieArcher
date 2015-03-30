@@ -11,7 +11,8 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:id="@+id/linearLayout">
 
         <Button
             android:layout_width="wrap_content"
@@ -36,14 +37,49 @@
 
     </LinearLayout>
 
-    <TextView
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:id="@+id/titleTextView"
+        android:id="@+id/linearLayout2"
+        android:background="#ff00149b"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="75dp" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/linearLayout">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Augie"
+            android:id="@+id/titleTextView1"
+            android:textSize="75dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignLeft="@+id/linearLayout"
+            android:layout_alignStart="@+id/linearLayout"
+            android:textColor="#fffffe09"
+            android:layout_gravity="left|top"
+            android:paddingRight="50dp"
+            android:paddingTop="25dp"
+            android:focusable="false"
+            android:fontFamily="sans-serif-medium" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Archer"
+            android:id="@+id/titleTextView2"
+            android:textSize="75dp"
+            android:textColor="#fffffe09"
+            android:layout_gravity="right|bottom"
+            android:layout_below="@+id/linearLayout2"
+            android:layout_alignRight="@+id/linearLayout"
+            android:layout_alignEnd="@+id/linearLayout"
+            android:paddingLeft="50dp"
+            android:paddingTop="50dp" />
+
+    </LinearLayout>
 
 </RelativeLayout>
