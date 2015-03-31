@@ -1,5 +1,9 @@
 package edu.augustana.csc490.augiearcher;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -19,6 +23,9 @@ public class MainActivity extends ActionBarActivity {
         //Create listener to launch game from the "Play" button
         Button launchGameButton=(Button) findViewById(R.id.launchGameButton);
         launchGameButton.setOnClickListener(launchGameClickHandler);
+
+        Button settingsDialogButton=(Button) findViewById(R.id.launchInstructionButton);
+        settingsDialogButton.setOnClickListener(settingsDialogClickHandler);
     }
 
     View.OnClickListener launchGameClickHandler=new View.OnClickListener(){
@@ -29,7 +36,33 @@ public class MainActivity extends ActionBarActivity {
             startActivity(playGameIntent);
         }
     };
+//NEED TO CREATE NEW CUSTOM LAYOUT FOR DIALOG
+    Dialog.OnClickListener settingsDialogClickHandler=new Dialog.OnClickListener(){
 
+        @Override
+        public void onClick(DialogInterface instructionTestDialog, int which) {
+            Dialog test=(Dialog) new instructionsTestDialog();
+
+        }
+
+    };
+
+
+    private class instructionsTestDialog extends DialogFragment {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the Builder class for convenient dialog construction
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(R.string.dialog_instructions)
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User cancelled the dialog
+                        }
+                    });
+            // Create the AlertDialog object and return it
+            return builder.create();
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
