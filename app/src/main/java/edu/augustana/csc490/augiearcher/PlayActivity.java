@@ -1,40 +1,24 @@
 package edu.augustana.csc490.augiearcher;
 
-import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 
 
-public class MainActivity extends ActionBarActivity {
+public class PlayActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        //Create listener to launch game from the "Play" button
-        Button launchGameButton=(Button) findViewById(R.id.launchGameButton);
-        launchGameButton.setOnClickListener(launchGameClickHandler);
+        setContentView(R.layout.activity_play);
     }
-
-    View.OnClickListener launchGameClickHandler=new View.OnClickListener(){
-
-        @Override
-        public void onClick(View v) {
-            Intent playGameIntent=new Intent(MainActivity.this, PlayActivity.class);
-            startActivity(playGameIntent);
-        }
-    };
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_play, menu);
         return true;
     }
 
