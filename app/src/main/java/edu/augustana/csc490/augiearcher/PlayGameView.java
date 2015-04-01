@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -19,8 +20,10 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
     private GameThread gameThread; // runs the main game loop
 
     private Activity playGameActivity; // keep a reference to the main Activity
-    private Paint myPaint;
+    private Paint archer;
     private Paint backgroundPaint;
+
+    private boolean isGameOver = true;
 
     private int x;
     private int y;
@@ -35,15 +38,67 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
 
         getHolder().addCallback(this);
 
-        myPaint = new Paint();
-        myPaint.setColor(Color.BLUE);
+        archer = new Paint();
+        archer.setColor(Color.BLUE);
         backgroundPaint = new Paint();
-        backgroundPaint.setColor(Color.CYAN);
+        backgroundPaint.setColor(Color.WHITE);
+    }
+
+    // called when the size changes (and first time, when view is created)
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh)
+    {
+        super.onSizeChanged(w, h, oldw, oldh);
+
+        screenWidth = w;
+        screenHeight = h;
+
+        startNewGame();
+    }
+
+    public void startNewGame()
+    {
+        this.x = 25;
+        this.y = 25;
+
+        if (isGameOver)
+        {
+            isGameOver = false;
+            gameThread = new GameThread(getHolder());
+            gameThread.start(); // start the main game loop going
+        }
+    }
+
+
+    private void gameStep()
+    {
+        x++;
+    }
+
+    public void updateView(Canvas canvas)
+    {
+        if (canvas != null) {
+            canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), backgroundPaint);
+            canvas.drawCircle(x, y, 20, archer);
+        }
+    }
+
+    // stop the game; may be called by the MainGameFragment onPause
+    public void stopGame()
+    {
+        if (gameThread != null)
+            gameThread.setRunning(false);
+    }
+
+    // release resources; may be called by MainGameFragment onDestroy
+    public void releaseResources()
+    {
+        // release any resources (e.g. SoundPool stuff)
     }
 
     @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-
+    public void surfaceCreated(SurfaceHolder holder)
+    {
     }
 
     @Override
@@ -51,8 +106,10 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
 
     }
 
+    // called when the surface is destroyed
     @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
+    public void surfaceDestroyed(SurfaceHolder holder)
+    {
         // ensure that thread terminates properly
         boolean retry = true;
         gameThread.setRunning(false); // terminate gameThread
@@ -71,31 +128,19 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
         }
     }
 
-    public void stopGame()
+    @Override
+    public boolean onTouchEvent(MotionEvent e)
     {
-        if (gameThread != null)
-            gameThread.setRunning(false);
-    }
-
-    public void releaseResources()
-    {
-        // release any resources (e.g. SoundPool stuff)
-    }
-
-    private void gameStep()
-    {
-        x++;
-    }
-
-    public void updateView(Canvas canvas)
-    {
-        if (canvas != null) {
-            canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), backgroundPaint);
-            canvas.drawCircle(x, y, 20, myPaint);
+        if (e.getAction() == MotionEvent.ACTION_DOWN)
+        {
+            this.x = (int) e.getX();
+            this.y = (int) e.getY();
         }
+
+        return true;
     }
 
-
+    // Thread subclass to run the main game loop
     private class GameThread extends Thread
     {
         private SurfaceHolder surfaceHolder; // for manipulating canvas
