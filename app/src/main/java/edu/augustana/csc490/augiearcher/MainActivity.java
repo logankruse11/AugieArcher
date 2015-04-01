@@ -24,8 +24,8 @@ public class MainActivity extends ActionBarActivity {
         Button launchGameButton=(Button) findViewById(R.id.launchGameButton);
         launchGameButton.setOnClickListener(launchGameClickHandler);
 
-        Button settingsDialogButton=(Button) findViewById(R.id.launchInstructionButton);
-        settingsDialogButton.setOnClickListener(settingsDialogClickHandler);
+        //Button settingsDialogButton=(Button) findViewById(R.id.launchInstructionButton);
+        //settingsDialogButton.setOnClickListener(settingsDialogClickHandler);
     }
 
     View.OnClickListener launchGameClickHandler=new View.OnClickListener(){
@@ -37,6 +37,7 @@ public class MainActivity extends ActionBarActivity {
         }
     };
 //NEED TO CREATE NEW CUSTOM LAYOUT FOR DIALOG
+    /*
     Dialog.OnClickListener settingsDialogClickHandler=new Dialog.OnClickListener(){
 
         @Override
@@ -46,7 +47,6 @@ public class MainActivity extends ActionBarActivity {
         }
 
     };
-
 
     private class instructionsTestDialog extends DialogFragment {
         @Override
@@ -63,7 +63,7 @@ public class MainActivity extends ActionBarActivity {
             return builder.create();
         }
     }
-
+*/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
