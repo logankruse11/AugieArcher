@@ -20,13 +20,22 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
     private GameThread gameThread; // runs the main game loop
 
     private Activity playGameActivity; // keep a reference to the main Activity
-    private Paint archer;
+    private Paint arrow;
     private Paint backgroundPaint;
+
+    private ShotObject shot;
 
     private boolean isGameOver = true;
 
     private int x;
     private int y;
+    private int xStart;
+    private int yStart;
+    private int xEnd;
+    private int yEnd;
+    private int xSpeed=1;
+    private int ySpeed=0;
+    private int gravityCount=0;
     private int screenWidth;
     private int screenHeight;
 
@@ -38,8 +47,8 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
 
         getHolder().addCallback(this);
 
-        archer = new Paint();
-        archer.setColor(Color.BLUE);
+        arrow = new Paint();
+        arrow.setColor(Color.BLUE);
         backgroundPaint = new Paint();
         backgroundPaint.setColor(Color.WHITE);
     }
@@ -72,14 +81,18 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
 
     private void gameStep()
     {
-        x++;
+        x+=xSpeed;
+        y+=ySpeed;
     }
 
     public void updateView(Canvas canvas)
     {
         if (canvas != null) {
             canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), backgroundPaint);
-            canvas.drawCircle(x, y, 20, archer);
+            //canvas.drawCircle(x, y, 20, arrow);
+            canvas.drawLine(x,y,x-40,y, arrow);
+            canvas.drawLine(x,y,x-10,y-10, arrow);
+            canvas.drawLine(x,y,x-10,y+10, arrow);
         }
     }
 
@@ -131,12 +144,19 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
     @Override
     public boolean onTouchEvent(MotionEvent e)
     {
-        if (e.getAction() == MotionEvent.ACTION_DOWN)
-        {
-            this.x = (int) e.getX();
-            this.y = (int) e.getY();
+        if(e.getAction()==MotionEvent.ACTION_DOWN){
+            xStart=(int) e.getX();
+            yStart=(int) e.getY();
         }
-
+        if(e.getAction()==MotionEvent.ACTION_UP){
+            xEnd=(int) e.getX();
+            this.x=xEnd;
+            yEnd=(int) e.getY();
+            this.y=yEnd;
+        }
+        this.shot=new ShotObject(xStart,yStart,xEnd,yEnd);
+        this.xSpeed=shot.xSpeed();
+        this.ySpeed=shot.ySpeed();
         return true;
     }
 
