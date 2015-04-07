@@ -11,6 +11,8 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.util.ArrayList;
+
 /**
  * Created by logankruse11 on 4/1/2015.
  */
@@ -21,9 +23,12 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
 
     private Activity playGameActivity; // keep a reference to the main Activity
     private Paint arrow;
+    private Paint target;
     private Paint backgroundPaint;
+    private ArrayList<ArrowObject> arrowArrayList;
 
-    private ShotObject shot;
+    //replaced by arrow
+    //private ShotObject shot;
 
     private boolean isGameOver = true;
 
@@ -33,6 +38,9 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
     private int yStart;
     private int xEnd;
     private int yEnd;
+    private int targetX;
+    private int targetYTop;
+    private int targetYBot;
     private int xSpeed=1;
     private int ySpeed=0;
     private int gravityCount=0;
@@ -47,8 +55,12 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
 
         getHolder().addCallback(this);
 
+        arrowArrayList=new ArrayList<ArrowObject>();
+
         arrow = new Paint();
         arrow.setColor(Color.BLUE);
+        target=new Paint();
+        target.setColor(Color.BLACK);
         backgroundPaint = new Paint();
         backgroundPaint.setColor(Color.WHITE);
     }
@@ -61,6 +73,9 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
 
         screenWidth = w;
         screenHeight = h;
+        targetX=w-20;
+        targetYTop=h/2-75;
+        targetYBot=h/2+75;
 
         startNewGame();
     }
@@ -81,18 +96,25 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
 
     private void gameStep()
     {
-        x+=xSpeed;
-        y+=ySpeed;
+        for(int i=0; i<arrowArrayList.size(); i++){
+            arrowArrayList.get(i).moveArrow(targetX,targetYTop,targetYBot);
+        }
     }
 
     public void updateView(Canvas canvas)
     {
         if (canvas != null) {
             canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), backgroundPaint);
-            //canvas.drawCircle(x, y, 20, arrow);
-            canvas.drawLine(x,y,x-40,y, arrow);
-            canvas.drawLine(x,y,x-10,y-10, arrow);
-            canvas.drawLine(x,y,x-10,y+10, arrow);
+            canvas.drawLine(targetX,targetYTop,targetX,targetYBot,target);
+            for(int i=0; i<arrowArrayList.size(); i++){
+                ArrowObject arrowToDraw=arrowArrayList.get(i);
+                int drawX=arrowToDraw.getX();
+                int drawY=arrowToDraw.getY();
+                canvas.drawLine(drawX,drawY,drawX-40,drawY, arrow);
+                canvas.drawLine(drawX,drawY,drawX-10,drawY-10, arrow);
+                canvas.drawLine(drawX,drawY,drawX-10,drawY+10, arrow);
+            }
+
         }
     }
 
@@ -153,10 +175,9 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
             this.x=xEnd;
             yEnd=(int) e.getY();
             this.y=yEnd;
+            ArrowObject newArrow=new ArrowObject(x,y,xStart,yStart,xEnd,yEnd);
+            arrowArrayList.add(newArrow);
         }
-        this.shot=new ShotObject(xStart,yStart,xEnd,yEnd);
-        this.xSpeed=shot.xSpeed();
-        this.ySpeed=shot.ySpeed();
         return true;
     }
 
