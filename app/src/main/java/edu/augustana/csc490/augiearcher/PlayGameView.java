@@ -41,25 +41,24 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
     private int targetX;
     private int targetYTop;
     private int targetYBot;
-    private int xSpeed=1;
-    private int ySpeed=0;
-    private int gravityCount=0;
+    private int xSpeed = 1;
+    private int ySpeed = 0;
+    private int gravityCount = 0;
     private int screenWidth;
     private int screenHeight;
 
 
-    public PlayGameView(Context context, AttributeSet atts)
-    {
+    public PlayGameView(Context context, AttributeSet atts) {
         super(context, atts);
         playGameActivity = (Activity) context;
 
         getHolder().addCallback(this);
 
-        arrowArrayList=new ArrayList<ArrowObject>();
+        arrowArrayList = new ArrayList<ArrowObject>();
 
         arrow = new Paint();
         arrow.setColor(Color.BLUE);
-        target=new Paint();
+        target = new Paint();
         target.setColor(Color.BLACK);
         backgroundPaint = new Paint();
         backgroundPaint.setColor(Color.WHITE);
@@ -67,26 +66,23 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
 
     // called when the size changes (and first time, when view is created)
     @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh)
-    {
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
         screenWidth = w;
         screenHeight = h;
-        targetX=w-20;
-        targetYTop=h/2-75;
-        targetYBot=h/2+75;
+        targetX = w - 50;
+        targetYTop = h / 2 - 100;
+        targetYBot = h / 2 + 100;
 
         startNewGame();
     }
 
-    public void startNewGame()
-    {
-        this.x = 25;
-        this.y = 25;
+    public void startNewGame() {
+        //this.x = 25;
+        //this.y = 25;
 
-        if (isGameOver)
-        {
+        if (isGameOver) {
             isGameOver = false;
             gameThread = new GameThread(getHolder());
             gameThread.start(); // start the main game loop going
@@ -94,46 +90,44 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
     }
 
 
-    private void gameStep()
-    {
-        for(int i=0; i<arrowArrayList.size(); i++){
-            arrowArrayList.get(i).moveArrow(targetX,targetYTop,targetYBot);
+    private void gameStep() {
+        for (int i = 0; i < arrowArrayList.size(); i++) {
+            if (arrowArrayList.get(i).isMoveAble()) {
+                arrowArrayList.get(i).moveArrow(targetX, targetYTop, targetYBot);
+            } else {
+            }
         }
     }
 
-    public void updateView(Canvas canvas)
-    {
+    public void updateView(Canvas canvas) {
         if (canvas != null) {
             canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), backgroundPaint);
-            canvas.drawLine(targetX,targetYTop,targetX,targetYBot,target);
-            for(int i=0; i<arrowArrayList.size(); i++){
-                ArrowObject arrowToDraw=arrowArrayList.get(i);
-                int drawX=arrowToDraw.getX();
-                int drawY=arrowToDraw.getY();
-                canvas.drawLine(drawX,drawY,drawX-40,drawY, arrow);
-                canvas.drawLine(drawX,drawY,drawX-10,drawY-10, arrow);
-                canvas.drawLine(drawX,drawY,drawX-10,drawY+10, arrow);
+            canvas.drawLine(targetX, targetYTop, targetX, targetYBot, target);
+            for (int i = 0; i < arrowArrayList.size(); i++) {
+                ArrowObject arrowToDraw = arrowArrayList.get(i);
+                int drawX = arrowToDraw.getX();
+                int drawY = arrowToDraw.getY();
+                canvas.drawLine(drawX, drawY, drawX - 40, drawY, arrow);
+                canvas.drawLine(drawX, drawY, drawX - 10, drawY - 10, arrow);
+                canvas.drawLine(drawX, drawY, drawX - 10, drawY + 10, arrow);
             }
 
         }
     }
 
     // stop the game; may be called by the MainGameFragment onPause
-    public void stopGame()
-    {
+    public void stopGame() {
         if (gameThread != null)
             gameThread.setRunning(false);
     }
 
     // release resources; may be called by MainGameFragment onDestroy
-    public void releaseResources()
-    {
+    public void releaseResources() {
         // release any resources (e.g. SoundPool stuff)
     }
 
     @Override
-    public void surfaceCreated(SurfaceHolder holder)
-    {
+    public void surfaceCreated(SurfaceHolder holder) {
     }
 
     @Override
@@ -143,86 +137,72 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
 
     // called when the surface is destroyed
     @Override
-    public void surfaceDestroyed(SurfaceHolder holder)
-    {
+    public void surfaceDestroyed(SurfaceHolder holder) {
         // ensure that thread terminates properly
         boolean retry = true;
         gameThread.setRunning(false); // terminate gameThread
 
-        while (retry)
-        {
-            try
-            {
+        while (retry) {
+            try {
                 gameThread.join(); // wait for gameThread to finish
                 retry = false;
-            }
-            catch (InterruptedException e)
-            {
+            } catch (InterruptedException e) {
                 Log.e(TAG, "Thread interrupted", e);
             }
         }
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent e)
-    {
-        if(e.getAction()==MotionEvent.ACTION_DOWN){
-            xStart=(int) e.getX();
-            yStart=(int) e.getY();
+    public boolean onTouchEvent(MotionEvent e) {
+        if (e.getAction() == MotionEvent.ACTION_DOWN) {
+            xStart = (int) e.getX();
+            yStart = (int) e.getY();
         }
-        if(e.getAction()==MotionEvent.ACTION_UP){
-            xEnd=(int) e.getX();
-            this.x=xEnd;
-            yEnd=(int) e.getY();
-            this.y=yEnd;
-            ArrowObject newArrow=new ArrowObject(x,y,xStart,yStart,xEnd,yEnd);
+        if (e.getAction() == MotionEvent.ACTION_UP) {
+            xEnd = (int) e.getX();
+            //this.x = xEnd;
+            yEnd = (int) e.getY();
+            //this.y = yEnd;
+            ArrowObject newArrow = new ArrowObject(50, screenHeight/2, xStart, yStart, xEnd, yEnd);
             arrowArrayList.add(newArrow);
         }
         return true;
     }
 
     // Thread subclass to run the main game loop
-    private class GameThread extends Thread
-    {
+    private class GameThread extends Thread {
         private SurfaceHolder surfaceHolder; // for manipulating canvas
         private boolean threadIsRunning = true; // running by default
 
         // initializes the surface holder
-        public GameThread(SurfaceHolder holder)
-        {
+        public GameThread(SurfaceHolder holder) {
             surfaceHolder = holder;
             setName("GameThread");
         }
 
         // changes running state
-        public void setRunning(boolean running)
-        {
+        public void setRunning(boolean running) {
             threadIsRunning = running;
         }
 
         @Override
-        public void run()
-        {
+        public void run() {
             Canvas canvas = null;
 
-            while (threadIsRunning)
-            {
-                try
-                {
+            while (threadIsRunning) {
+                try {
                     // get Canvas for exclusive drawing from this thread
                     canvas = surfaceHolder.lockCanvas(null);
 
                     // lock the surfaceHolder for drawing
-                    synchronized(surfaceHolder)
-                    {
+                    synchronized (surfaceHolder) {
                         gameStep();         // update game state
                         updateView(canvas); // draw using the canvas
                     }
-                    Thread.sleep(10); // if you want to slow down the action...
+                    Thread.sleep(5); // if you want to slow down the action...
                 } catch (InterruptedException ex) {
-                    Log.e(TAG,ex.toString());
-                }
-                finally  // regardless if any errors happen...
+                    Log.e(TAG, ex.toString());
+                } finally  // regardless if any errors happen...
                 {
                     // make sure we unlock canvas so other threads can use it
                     if (canvas != null)
