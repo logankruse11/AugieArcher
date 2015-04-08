@@ -23,17 +23,14 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
 
     private Activity playGameActivity; // keep a reference to the main Activity
     private Paint arrow;
-    private Paint target;
     private Paint backgroundPaint;
     private ArrayList<ArrowObject> arrowArrayList;
+    private TargetObject target;
 
-    //replaced by arrow
-    //private ShotObject shot;
 
     private boolean isGameOver = true;
 
-    private int x;
-    private int y;
+    private int score;
     private int xStart;
     private int yStart;
     private int xEnd;
@@ -41,9 +38,6 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
     private int targetX;
     private int targetYTop;
     private int targetYBot;
-    private int xSpeed = 1;
-    private int ySpeed = 0;
-    private int gravityCount = 0;
     private int screenWidth;
     private int screenHeight;
 
@@ -56,10 +50,9 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
 
         arrowArrayList = new ArrayList<ArrowObject>();
 
+
         arrow = new Paint();
-        arrow.setColor(Color.BLUE);
-        target = new Paint();
-        target.setColor(Color.BLACK);
+        arrow.setColor(Color.MAGENTA);
         backgroundPaint = new Paint();
         backgroundPaint.setColor(Color.WHITE);
     }
@@ -71,9 +64,11 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
 
         screenWidth = w;
         screenHeight = h;
-        targetX = w - 50;
-        targetYTop = h / 2 - 100;
-        targetYBot = h / 2 + 100;
+        targetX = w - 100;
+        targetYTop = h / 2 - 150;
+        targetYBot = h / 2 + 150;
+
+        target=new TargetObject(targetX,h/2,5,targetYBot-targetYTop);
 
         startNewGame();
     }
@@ -92,7 +87,7 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
 
     private void gameStep() {
         for (int i = 0; i < arrowArrayList.size(); i++) {
-            if (arrowArrayList.get(i).isMoveAble()) {
+            if (!target.isInTarget(arrowArrayList.get(i))) {
                 arrowArrayList.get(i).moveArrow(targetX, targetYTop, targetYBot);
             } else {
             }
@@ -102,8 +97,9 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
     public void updateView(Canvas canvas) {
         if (canvas != null) {
             canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), backgroundPaint);
-            canvas.drawLine(targetX, targetYTop, targetX, targetYBot, target);
+            target.drawTarget(canvas);
             for (int i = 0; i < arrowArrayList.size(); i++) {
+                arrow.setStrokeWidth(5);
                 ArrowObject arrowToDraw = arrowArrayList.get(i);
                 int drawX = arrowToDraw.getX();
                 int drawY = arrowToDraw.getY();
@@ -111,7 +107,6 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
                 canvas.drawLine(drawX, drawY, drawX - 10, drawY - 10, arrow);
                 canvas.drawLine(drawX, drawY, drawX - 10, drawY + 10, arrow);
             }
-
         }
     }
 
@@ -199,7 +194,7 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
                         gameStep();         // update game state
                         updateView(canvas); // draw using the canvas
                     }
-                    Thread.sleep(5); // if you want to slow down the action...
+                    Thread.sleep(1); // if you want to slow down the action...
                 } catch (InterruptedException ex) {
                     Log.e(TAG, ex.toString());
                 } finally  // regardless if any errors happen...

@@ -1,7 +1,5 @@
 package edu.augustana.csc490.augiearcher;
 
-import android.graphics.Point;
-
 /**
  * Created by logankruse11 on 4/7/2015.
  */
@@ -11,7 +9,7 @@ public class ArrowObject {
     private int xSpeed;
     private int ySpeed;
     private int gravityCounter = 0;
-    private boolean moveAble = true;
+    private boolean movable = true;
 
     public ArrowObject(int xStart, int yStart, int xPress, int yPress, int xRelease, int yRelease) {
         this.x = xStart;
@@ -25,12 +23,16 @@ public class ArrowObject {
         this.y = y + ySpeed + gravityCounter / 50;
         gravityCounter += 5;
         if (x >= targetX && y >= targetYTop && y <= targetYBot) {
-            this.moveAble = false;
+            this.movable = false;
         }
     }
 
-    public boolean isMoveAble() {
-        return moveAble;
+    public boolean isMovable() {
+        return movable;
+    }
+
+    public void setMovable(boolean set){
+        movable =set;
     }
 
     public int getX() {
