@@ -24,6 +24,7 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
     private Activity playGameActivity; // keep a reference to the main Activity
     private Paint arrow;
     private Paint backgroundPaint;
+    private Paint scoreText;
     private ArrayList<ArrowObject> arrowArrayList;
     private TargetObject target;
 
@@ -31,6 +32,7 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
     private boolean isGameOver = true;
 
     private int score;
+    private int shotCount;
     private int xStart;
     private int yStart;
     private int xEnd;
@@ -55,6 +57,9 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
         arrow.setColor(Color.MAGENTA);
         backgroundPaint = new Paint();
         backgroundPaint.setColor(Color.WHITE);
+        scoreText = new Paint();
+        scoreText.setTextSize(50);
+        scoreText.setColor(Color.BLACK);
     }
 
     // called when the size changes (and first time, when view is created)
@@ -74,9 +79,6 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
     }
 
     public void startNewGame() {
-        //this.x = 25;
-        //this.y = 25;
-
         if (isGameOver) {
             isGameOver = false;
             gameThread = new GameThread(getHolder());
@@ -86,11 +88,16 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
 
 
     private void gameStep() {
+        score=0;
         for (int i = 0; i < arrowArrayList.size(); i++) {
-            if (!target.isInTarget(arrowArrayList.get(i))) {
-                arrowArrayList.get(i).moveArrow(targetX, targetYTop, targetYBot);
-            } else {
+            ArrowObject arrowI=arrowArrayList.get(i);
+            if (!target.isInTarget(arrowI)) {
+                arrowI.moveArrow();
             }
+            if(arrowI.getX()>=screenWidth+20||arrowI.getY()>=screenHeight) {
+                arrowArrayList.remove(i);
+            }
+            score+=arrowI.getArrowScore();
         }
     }
 
@@ -98,8 +105,9 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
         if (canvas != null) {
             canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), backgroundPaint);
             target.drawTarget(canvas);
+            canvas.drawText("Score: "+score, 50,50,scoreText);
             for (int i = 0; i < arrowArrayList.size(); i++) {
-                arrow.setStrokeWidth(5);
+                arrow.setStrokeWidth(3);
                 ArrowObject arrowToDraw = arrowArrayList.get(i);
                 int drawX = arrowToDraw.getX();
                 int drawY = arrowToDraw.getY();
@@ -149,18 +157,16 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
-        if (e.getAction() == MotionEvent.ACTION_DOWN) {
-            xStart = (int) e.getX();
-            yStart = (int) e.getY();
-        }
-        if (e.getAction() == MotionEvent.ACTION_UP) {
-            xEnd = (int) e.getX();
-            //this.x = xEnd;
-            yEnd = (int) e.getY();
-            //this.y = yEnd;
-            ArrowObject newArrow = new ArrowObject(50, screenHeight/2, xStart, yStart, xEnd, yEnd);
-            arrowArrayList.add(newArrow);
-        }
+            if (e.getAction() == MotionEvent.ACTION_DOWN) {
+                xStart = (int) e.getX();
+                yStart = (int) e.getY();
+            }
+            if (e.getAction() == MotionEvent.ACTION_UP) {
+                xEnd = (int) e.getX();
+                yEnd = (int) e.getY();
+                ArrowObject newArrow = new ArrowObject(50, screenHeight / 2, xStart, yStart, xEnd, yEnd);
+                arrowArrayList.add(newArrow);
+            }
         return true;
     }
 
@@ -194,7 +200,7 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
                         gameStep();         // update game state
                         updateView(canvas); // draw using the canvas
                     }
-                    Thread.sleep(1); // if you want to slow down the action...
+                    Thread.sleep(5); // if you want to slow down the action...
                 } catch (InterruptedException ex) {
                     Log.e(TAG, ex.toString());
                 } finally  // regardless if any errors happen...

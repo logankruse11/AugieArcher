@@ -9,7 +9,7 @@ public class ArrowObject {
     private int xSpeed;
     private int ySpeed;
     private int gravityCounter = 0;
-    private boolean movable = true;
+    private int arrowScore=0;
 
     public ArrowObject(int xStart, int yStart, int xPress, int yPress, int xRelease, int yRelease) {
         this.x = xStart;
@@ -18,21 +18,14 @@ public class ArrowObject {
         this.ySpeed = (yPress - yRelease) / 40;
     }
 
-    public void moveArrow(int targetX, int targetYTop, int targetYBot) {
+    public void moveArrow() {
         this.x = x + xSpeed;
         this.y = y + ySpeed + gravityCounter / 50;
         gravityCounter += 5;
-        if (x >= targetX && y >= targetYTop && y <= targetYBot) {
-            this.movable = false;
-        }
     }
 
-    public boolean isMovable() {
-        return movable;
-    }
-
-    public void setMovable(boolean set){
-        movable =set;
+    public void setArrowScore(int score){
+        this.arrowScore=score;
     }
 
     public int getX() {
@@ -42,4 +35,6 @@ public class ArrowObject {
     public int getY() {
         return y;
     }
+
+    public int getArrowScore() {return arrowScore; }
 }

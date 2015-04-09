@@ -31,8 +31,8 @@ public class TargetObject {
     }
 
     public boolean isInTarget(ArrowObject a){
-        if(a.getX()>=centerX && a.getY()<=centerY+sizeRadius && a.getY() >= centerY-sizeRadius){
-            a.setMovable(false);
+        if(a.getX()>=centerX && a.getX()<=centerX+20 && a.getY()<=centerY+sizeRadius && a.getY() >= centerY-sizeRadius){
+            getScoreForPoint(a);
             return true;
         }else{
             return false;
@@ -47,9 +47,9 @@ public class TargetObject {
         return centerY;
     }
 
-    public int getScoreForPoint(int y){
-        int score=Math.abs(centerY-y)/ringSpacing;
-        return pointValue[score];
+    public void getScoreForPoint(ArrowObject a){
+        int score=Math.abs(centerY-a.getY())/ringSpacing;
+        a.setArrowScore(pointValue[score]);
     }
 
     public void drawTarget(Canvas canvas){
