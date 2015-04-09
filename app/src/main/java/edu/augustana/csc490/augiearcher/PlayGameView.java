@@ -33,6 +33,7 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
 
     private int score;
     private int shotCount;
+    private int missCount;
     private int xStart;
     private int yStart;
     private int xEnd;
@@ -96,6 +97,7 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
             }
             if(arrowI.getX()>=screenWidth+20||arrowI.getY()>=screenHeight) {
                 arrowArrayList.remove(i);
+                missCount++;
             }
             score+=arrowI.getArrowScore();
         }
@@ -157,6 +159,7 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
+        if(shotCount<=10) {
             if (e.getAction() == MotionEvent.ACTION_DOWN) {
                 xStart = (int) e.getX();
                 yStart = (int) e.getY();
@@ -166,7 +169,9 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
                 yEnd = (int) e.getY();
                 ArrowObject newArrow = new ArrowObject(50, screenHeight / 2, xStart, yStart, xEnd, yEnd);
                 arrowArrayList.add(newArrow);
+                shotCount++;
             }
+        }
         return true;
     }
 
