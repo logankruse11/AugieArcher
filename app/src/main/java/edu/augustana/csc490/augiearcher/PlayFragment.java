@@ -1,7 +1,5 @@
 package edu.augustana.csc490.augiearcher;
 
-import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;

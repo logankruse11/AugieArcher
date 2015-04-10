@@ -31,7 +31,7 @@ public class TargetObject {
     }
 
     public boolean isInTarget(ArrowObject a){
-        if(a.getX()>=centerX && a.getX()<=centerX+20 && a.getY()<=centerY+sizeRadius && a.getY() >= centerY-sizeRadius){
+        if(a.getX()>=centerX-15 && a.getX()<=centerX+15 && a.getY()<=centerY+sizeRadius && a.getY() >= centerY-sizeRadius){
             getScoreForPoint(a);
             return true;
         }else{

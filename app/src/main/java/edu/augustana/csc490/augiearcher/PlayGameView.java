@@ -22,7 +22,6 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
     private GameThread gameThread; // runs the main game loop
 
     private Activity playGameActivity; // keep a reference to the main Activity
-    private Paint arrow;
     private Paint backgroundPaint;
     private Paint scoreText;
     private ArrayList<ArrowObject> arrowArrayList;
@@ -33,7 +32,7 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
 
     private int score;
     private int shotCount;
-    private int missCount;
+    private int missCount=0;
     private int xStart;
     private int yStart;
     private int xEnd;
@@ -54,8 +53,6 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
         arrowArrayList = new ArrayList<ArrowObject>();
 
 
-        arrow = new Paint();
-        arrow.setColor(Color.MAGENTA);
         backgroundPaint = new Paint();
         backgroundPaint.setColor(Color.WHITE);
         scoreText = new Paint();
@@ -71,8 +68,8 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
         screenWidth = w;
         screenHeight = h;
         targetX = w - 100;
-        targetYTop = h / 2 - 150;
-        targetYBot = h / 2 + 150;
+        targetYTop = h / 2 - 175;
+        targetYBot = h / 2 + 175;
 
         target=new TargetObject(targetX,h/2,5,targetYBot-targetYTop);
 
@@ -108,14 +105,14 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
             canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), backgroundPaint);
             target.drawTarget(canvas);
             canvas.drawText("Score: "+score, 50,50,scoreText);
+            canvas.drawText("Shots: "+shotCount+"/10",screenWidth-400,50,scoreText);
             for (int i = 0; i < arrowArrayList.size(); i++) {
-                arrow.setStrokeWidth(3);
-                ArrowObject arrowToDraw = arrowArrayList.get(i);
-                int drawX = arrowToDraw.getX();
-                int drawY = arrowToDraw.getY();
-                canvas.drawLine(drawX, drawY, drawX - 40, drawY, arrow);
-                canvas.drawLine(drawX, drawY, drawX - 10, drawY - 10, arrow);
-                canvas.drawLine(drawX, drawY, drawX - 10, drawY + 10, arrow);
+                arrowArrayList.get(i).drawArrow(canvas);
+            }
+            if (shotCount<=9){
+                canvas.drawText("Drag back and release to shoot!",50,screenHeight-60,scoreText);
+            }else{
+                canvas.drawText("Press back button to play again!",50,screenHeight-60,scoreText);
             }
         }
     }
@@ -159,7 +156,7 @@ public class PlayGameView extends SurfaceView implements SurfaceHolder.Callback 
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
-        if(shotCount<=10) {
+        if(shotCount<=9) {
             if (e.getAction() == MotionEvent.ACTION_DOWN) {
                 xStart = (int) e.getX();
                 yStart = (int) e.getY();
